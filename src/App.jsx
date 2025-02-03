@@ -22,6 +22,21 @@ export default function App() {
   const [urls, setUrls] = useState([]);
   const [pokemon, setPokemon] = useState([])
 
+  function fetchUrls(ignore) {
+    const randInt = getRandomInt(0, 1000);
+    let data = [];
+    fetch(`https://pokeapi.co/api/v2/pokemon?limit=24&offset=${randInt}`)
+    .then((response) => {
+      return response.json();
+    })
+    .then((result) => {
+      data = Array.from(result.results);
+      if (!ignore) {
+        setUrls(data);
+      }
+    })
+  }
+
   useEffect(() => {
     let ignore = false;
 
@@ -37,7 +52,7 @@ export default function App() {
         setUrls(data);
       }
     })
-    
+        
     return () => { ignore = true; }
   }, [])
 
@@ -84,13 +99,13 @@ export default function App() {
     setPokemon(shuffled);
   }
 
-  console.log(seen);
   return (
     <div className="container">
       <div className="header">
         <div className="description">
           <h1>Pokemon Memory Game</h1>
           <p>Click on as many Pokemon as you can, but don&apos;t click the same one twice!</p>
+          <button onClick={() => fetchUrls(false)}>New Pokemon</button>
         </div>
         <div className="score">
           <h2>Score: {score}</h2>
